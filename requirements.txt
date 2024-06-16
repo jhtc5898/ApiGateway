@@ -1,0 +1,10 @@
+fastapi
+starlette
+requests
+uvicorn
+prometheus-fastapi-instrumentator
+sqlalchemy
+psycopg2-binary
+pytest
+docker
+psutil

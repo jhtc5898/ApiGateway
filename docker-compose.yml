@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    deploy:
+      replicas: 4
+      update_config:
+        delay: 10s
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`localhost`)"  # Cambia `localhost` por tu dominio o IP
+      - "traefik.http.services.app.loadbalancer.server.port=8000"
+    networks:
+      - monitoring
+
+  postgresql:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: services
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - monitoring
+
+  portainer:
+    image: portainer/portainer-ce
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - monitoring
+
+  traefik:
+    image: traefik:v2.5
+    command:
+      - "--api.insecure=true"  # Habilita el dashboard de Traefik (no recomendado para producción)
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"  # Dashboard de Traefik (opcional, no recomendado para producción)
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+
+volumes:
+  portainer_data:
