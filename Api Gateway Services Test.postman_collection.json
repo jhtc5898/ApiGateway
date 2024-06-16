@@ -1,0 +1,194 @@
+{
+	"info": {
+		"_postman_id": "10e544a3-a60a-4bea-a7af-f70e1aff754d",
+		"name": "Api Gateway Services Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13910567"
+	},
+	"item": [
+		{
+			"name": "Consumir servicios internos pasando por el balanceador",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/servicio1/api/usersEcuador",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"servicio1",
+						"api",
+						"usersEcuador"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Consumir servicios TEST de usuarios",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://192.168.88.5:8090/api/usersEcuador",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"88",
+						"5"
+					],
+					"port": "8090",
+					"path": [
+						"api",
+						"usersEcuador"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear nuevo EndPoint",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":\"patito\",\r\n    \"url\":\"patito\",\r\n    \"nombre\":\"patito\"      \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/nuevoServicio",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"nuevoServicio"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar EndPoint",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":\"patito\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/deleteServicio",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"deleteServicio"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Activar EndPoint",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":\"patito\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/deleteServicio",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"deleteServicio"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Servicios EndPoint",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":\"patito\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/obtenerServicios",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"obtenerServicios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Informacion contenedor EndPoint",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":\"patito\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/obtenerInformacionContenedor",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"obtenerInformacionContenedor"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
