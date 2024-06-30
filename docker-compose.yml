@@ -5,13 +5,13 @@ services:
     build: .
     deploy:
       replicas: 4
-      update_config:
-        delay: 10s
+      # update_config:
+      #   delay: 10s
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.app.rule=Host(`localhost`)"  # Cambia `localhost` por tu dominio o IP
+      - "traefik.http.routers.app.rule=Host(`localhost`)"  # Cambia `localhost` por dominio o IP
       - "traefik.http.services.app.loadbalancer.server.port=8000"
     networks:
       - monitoring
@@ -42,12 +42,12 @@ services:
   traefik:
     image: traefik:v2.5
     command:
-      - "--api.insecure=true"  # Habilita el dashboard de Traefik (no recomendado para producción)
+      - "--api.insecure=true"  # Habilita el dashboard de Traefik 
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
     ports:
       - "80:80"
-      - "8080:8080"  # Dashboard de Traefik (opcional, no recomendado para producción)
+      - "8080:8080"  # Dashboard de Traefik 
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     networks:
