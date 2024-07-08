@@ -15,6 +15,11 @@ services:
       - "traefik.http.services.app.loadbalancer.server.port=8000"
     networks:
       - monitoring
+    environment:
+      - JAEGER_AGENT_HOST=jaeger
+      - JAEGER_AGENT_PORT=6831
+      - JAEGER_SAMPLER_TYPE=const
+      - JAEGER_SAMPLER_PARAM=1
 
   postgresql:
     image: postgres:latest
@@ -45,11 +50,30 @@ services:
       - "--api.insecure=true"  # Habilita el dashboard de Traefik 
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http.tls=true"
+      - "--tracing.jaeger=true"
+      - "--tracing.jaeger.samplingServerURL=http://jaeger:5778/sampling"
+      - "--tracing.jaeger.localAgentHostPort=jaeger:6831"
     ports:
       - "80:80"
       - "8080:8080"  # Dashboard de Traefik 
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - monitoring
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14250:14250"
+      - "14268:14268"
+      - "14269:14269"
+      - "9411:9411"
     networks:
       - monitoring
 
