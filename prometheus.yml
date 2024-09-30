@@ -5,6 +5,11 @@ scrape_configs:
   - job_name: 'jaeger'
     static_configs:
       - targets: ['jaeger:14268']
+  
   - job_name: 'jaeger_metrics'
     static_configs:
       - targets: ['jaeger:14250']  # Puerto donde Jaeger exporta métricas
+
+  - job_name: 'fastapi-app'
+    static_configs:
+      - targets: ['app:8000']  # Agrega el target de tu aplicación FastAPI

@@ -11,9 +11,12 @@ import docker
 import psutil
 import socket
 from fastapi.responses import JSONResponse
+from prometheus_fastapi_instrumentator import Instrumentator
 
 app = FastAPI()
 client = docker.from_env()
+
+Instrumentator().instrument(app).expose(app)
 
 
 # ------------------------
@@ -110,13 +113,21 @@ def crear_servicio(db: Session, servicio: ServicioCreate):
 
 def editar_info_servicio(db: Session, servicio: ServicioCreate):
     try:
-        servicio = db.query(Servicio).filter(Servicio.id == servicio.id).first()
-        if not servicio:
+        # Recuperar el servicio existente de la base de datos
+        servicio_db = db.query(Servicio).filter(Servicio.id == servicio.id).first()
+
+        if not servicio_db:
             raise HTTPException(status_code=404, detail="Servicio no encontrado")
-        db.query(Servicio).filter(Servicio.id == servicio.id).update({Servicio.url: servicio.url, Servicio.nombre: servicio.nombre})
+
+        # Actualizar los campos del servicio existente
+        servicio_db.url = servicio.url
+        servicio_db.nombre = servicio.nombre
+
+        # Guardar los cambios
         db.commit()
-        db.refresh(servicio)
-        return servicio
+        db.refresh(servicio_db)
+
+        return {"message": "Servicio actualizado"}
     
     except Exception as e:
         print(e)

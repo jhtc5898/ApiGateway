@@ -83,6 +83,15 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - monitoring
+      
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"  # Puerto para acceder a Grafana
+    networks:
+      - monitoring
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin  # Cambia la contraseña de admin si lo deseas
 
 networks:
   monitoring:
