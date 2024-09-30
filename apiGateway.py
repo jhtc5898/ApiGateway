@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 import docker
 import psutil
 import socket
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 client = docker.from_env()
@@ -106,6 +107,22 @@ def crear_servicio(db: Session, servicio: ServicioCreate):
         db.rollback()
         raise HTTPException(status_code=500, detail="Error al crear el servicio")
 
+
+def editar_info_servicio(db: Session, servicio: ServicioCreate):
+    try:
+        servicio = db.query(Servicio).filter(Servicio.id == servicio.id).first()
+        if not servicio:
+            raise HTTPException(status_code=404, detail="Servicio no encontrado")
+        db.query(Servicio).filter(Servicio.id == servicio.id).update({Servicio.url: servicio.url, Servicio.nombre: servicio.nombre})
+        db.commit()
+        db.refresh(servicio)
+        return servicio
+    
+    except Exception as e:
+        print(e)
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Error al editar el servicio")
+
 def cambiar_estado_servicio(db: Session, servicio_id: str, nuevo_estado: str):
     # Validación de que existe el servicio a actualizar
     servicio = db.query(Servicio).filter(Servicio.id == servicio_id).first()
@@ -117,6 +134,13 @@ def cambiar_estado_servicio(db: Session, servicio_id: str, nuevo_estado: str):
 
 
 # ------------------------
+# health check
+# ------------------------
+@app.get("/health")
+async def health_check():
+    return JSONResponse(content={"status": "healthy"}, status_code=200)
+
+# ------------------------
 # Definición de rutas
 # ------------------------
 
@@ -124,6 +148,12 @@ def cambiar_estado_servicio(db: Session, servicio_id: str, nuevo_estado: str):
 async def crear_nuevo_servicio(servicio: ServicioCreate, db: Session = Depends(get_db)):
     print(servicio)
     nuevo_servicio = crear_servicio(db, servicio)
+    return nuevo_servicio
+
+@app.post("/editarServicio")
+async def editar_servicio(servicio: ServicioCreate, db: Session = Depends(get_db)):
+    print(servicio)
+    nuevo_servicio = editar_info_servicio(db, servicio)
     return nuevo_servicio
 
 @app.post("/deleteServicio")

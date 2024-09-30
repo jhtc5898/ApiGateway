@@ -5,14 +5,14 @@ services:
     build: .
     deploy:
       replicas: 4
-      # update_config:
-      #   delay: 10s
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.app.rule=Host(`localhost`)"  # Cambia `localhost` por dominio o IP
       - "traefik.http.services.app.loadbalancer.server.port=8000"
+      - "traefik.http.services.app.loadbalancer.healthcheck.path=/health"
+      - "traefik.http.services.app.loadbalancer.healthcheck.interval=10s"
     networks:
       - monitoring
     environment:
@@ -20,6 +20,7 @@ services:
       - JAEGER_AGENT_PORT=6831
       - JAEGER_SAMPLER_TYPE=const
       - JAEGER_SAMPLER_PARAM=1
+      - JAEGER_GRPC_SERVER_HOST_PORT=:14250  # Puerto donde Jaeger exportará métricas
 
   postgresql:
     image: postgres:latest
@@ -68,12 +69,18 @@ services:
     ports:
       - "6831:6831/udp"
       - "6832:6832/udp"
-      - "5778:5778"
+      - "5778:5778"  # Puerto para métricas de Prometheus
+      - "14250:14250"  # Puerto para métricas de Jaeger (agregado)
       - "16686:16686"
-      - "14250:14250"
-      - "14268:14268"
-      - "14269:14269"
-      - "9411:9411"
+    networks:
+      - monitoring
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - monitoring
 
